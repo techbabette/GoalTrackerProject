@@ -24,5 +24,25 @@ module.exports = {
             res.status(500);
             res.json({error: "Unknown server error"});
         }
+    },
+    authenticateUser: async (req, res) => {
+        let {username, password} = req.body;
+
+        let user = await UserModel.findOne({username: username});
+
+        if(!user){
+            res.status(401);
+            res.json({error: "No user with that username exists"});
+            return;
+        }
+
+        if(user.password !== password){
+            res.status(401);
+            res.json({error: "Incorrect password"});
+            return;
+        }
+
+        res.status(200);
+        res.json({message: "Successfully authenticated user"});
     }
 }

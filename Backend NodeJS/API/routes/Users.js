@@ -7,4 +7,6 @@ router.get("/", controller.getGreeting);
 
 router.post("/register", controller.createUser);
 
+router.post("/login", controller.authenticateUser);
+
 module.exports = router;
