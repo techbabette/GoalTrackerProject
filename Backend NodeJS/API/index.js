@@ -1,9 +1,22 @@
 const express = require("express");
+const mongoose =  require("mongoose");
+const bodyParser =  require("body-parser");
 require('dotenv').config();
 
 const app = express();
 
+let URLParser = bodyParser.urlencoded({extended: false});
+let JSONParser = bodyParser.json();
+
 let UserRouter = require("./routes/Users");
+
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+.then(res => console.log(`Connection Succesful ${res}`))
+.catch(err => console.log(`Error in DB connection ${err}`));
+
+app.use(express.json());
+app.use(URLParser);
+app.use(JSONParser);
 
 app.use("/users", UserRouter);
 
