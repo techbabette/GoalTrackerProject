@@ -4,8 +4,6 @@ let authorizationMethods = {
     amILoggedIn : (req, res, next) => {
         let tokenSent = req.headers["bearer"];
     
-        console.log(req.headers);
-    
         if(!tokenSent){
             res.status(401);
             res.json({error: "You must be logged in to perform this action"});
