@@ -31,6 +31,18 @@ class ProgressController extends BaseController{
             res.json({"message": "Successfully added progress"});
         })
     }
+    static async getUserProgress (req, res){
+        let userId = ProgressController.getUserIdFromToken(req);
+
+        let searchParams = {userId};
+
+        //Returns the user's progress, attemptExecution wraps the function in a try catch block
+        ProgressController.attemptExecution(async()=>{
+            let userProgress = await ProgressModel.find(searchParams);
+            res.status(200);
+            res.json({message : "Successfully retrieved progress", data : userProgress})
+        })
+    }
 }
 
 module.exports = ProgressController;
