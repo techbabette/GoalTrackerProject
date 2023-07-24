@@ -10,6 +10,7 @@ let JSONParser = bodyParser.json();
 
 let UserRouter = require("./routes/Users");
 let GoalRouter = require("./routes/Goals");
+let ProgressRouter = require("./routes/Progress");
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(res => console.log(`Connection Succesful ${res}`))
@@ -21,6 +22,7 @@ app.use(JSONParser);
 
 app.use("/users", UserRouter);
 app.use("/goals", GoalRouter);
+app.use("/progress", ProgressRouter);
 
 let port = process.env.PORT ?? 3000;
 
