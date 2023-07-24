@@ -1,0 +1,14 @@
+{
+  "name": "goaltrackerapi",
+  "version": "1.0.0",
+  "description": "Goal tracker api",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "activity tracking"
+  ],
+  "author": "",
+  "license": "GPL"
+}
