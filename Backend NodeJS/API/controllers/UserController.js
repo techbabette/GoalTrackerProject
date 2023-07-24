@@ -63,5 +63,8 @@ module.exports = {
         let returnToken = JWT.sign({user_id: user._id, username}, process.env.TOKEN_KEY, {expiresIn: "1h"});
         res.status(200);
         res.json({message: "Successfully authenticated user", body: returnToken});
-    }
+    },
+    mustBeLoggedIn: (req, res) => {
+        res.json({"message" : "You passed the authorization check!"});
+    } 
 }
