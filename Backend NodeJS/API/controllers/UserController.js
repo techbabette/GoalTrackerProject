@@ -1,14 +1,15 @@
 let UserModel = require("../models/User.js");
+let BaseController =  require("./BaseController.js");
 
 let bcrypt = require("bcryptjs");
 
 const JWT = require("jsonwebtoken");
 
-module.exports = {
-    getGreeting: (req, res) => {
+class UserController extends BaseController  {
+    static async getGreeting (req, res) {
         res.send("Hello user");
-    },
-    createUser: async (req, res) => {
+    }
+    static async createUser (req, res){
         let {username, password, repeatPassword, email} = req.body;
 
         //Data validation
@@ -39,8 +40,8 @@ module.exports = {
             res.status(500);
             res.json({error: "Unknown server error"});
         }
-    },
-    authenticateUser: async (req, res) => {
+    }
+    static async authenticateUser (req, res) {
         let {username, password} = req.body;
 
         let user = await UserModel.findOne({username: username});
@@ -63,8 +64,10 @@ module.exports = {
         let returnToken = JWT.sign({user_id: user._id, username}, process.env.TOKEN_KEY, {expiresIn: "1h"});
         res.status(200);
         res.json({message: "Successfully authenticated user", body: returnToken});
-    },
-    mustBeLoggedIn: (req, res) => {
+    }
+    static async mustBeLoggedIn (req, res) {
         res.json({"message" : "You passed the authorization check!"});
     } 
 }
+
+module.exports = UserController;

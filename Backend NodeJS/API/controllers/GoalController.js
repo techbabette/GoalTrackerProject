@@ -1,19 +1,11 @@
 let GoalModel = require("../models/Goal.js");
+let BaseController =  require("./BaseController.js");
 
-function getUserIdFromToken(req){
-    let tokenSent = req.headers["bearer"];
-
-
-    let userId = JSON.parse(Buffer.from(tokenSent.split('.')[1], 'base64').toString()).user_id; 
-
-    return userId;
-}
-
-module.exports = {
-    createGoal : async (req, res) => {
+class GoalController extends BaseController  {
+    static async createGoal (req, res)  {
         let {name, unit, repeats, desiredRepeats, startDate, desiredEndDate} = req.body;
 
-        let userId = getUserIdFromToken(req);
+        let userId = GoalController.getUserIdFromToken(req);
 
         try{
             let newGoal = await GoalModel.create({userId, name, unit, repeats, desiredRepeats, desiredEndDate, startDate});
@@ -24,9 +16,9 @@ module.exports = {
             console.log(ex);
             res.json({error: "Unknown server error"});
         }
-    },
-    getUserGoals : async(req, res) => {
-        let userId = getUserIdFromToken(req);
+    }
+    static async getUserGoals (req, res) {
+        let userId = GoalController.getUserIdFromToken(req);
 
         let searchParams = {userId};
 
@@ -49,3 +41,5 @@ module.exports = {
         }
     }
 };
+
+module.exports = GoalController;
