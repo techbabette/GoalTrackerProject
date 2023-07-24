@@ -21,6 +21,12 @@ class ProgressController extends BaseController{
         await ProgressController.attemptExecution(async()=>{
             await ProgressModel.create({goalId, userId, repeats, date, notes});
 
+            let goal = await GoalModel.findById(goalId);
+
+            goal.repeats += repeats;
+
+            goal.save();
+
             res.status(201);
             res.json({"message": "Successfully added progress"});
         })
