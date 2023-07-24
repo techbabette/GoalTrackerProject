@@ -7,15 +7,11 @@ class GoalController extends BaseController  {
 
         let userId = GoalController.getUserIdFromToken(req);
 
-        try{
+        //Creates a new goal for the submitting user, attemptExecution wraps the function in a try catch block
+        GoalController.attemptExecution(async()=>{
             let newGoal = await GoalModel.create({userId, name, unit, repeats, desiredRepeats, desiredEndDate, startDate});
             res.json(newGoal);
-        }
-        catch(ex){
-            res.status(500);
-            console.log(ex);
-            res.json({error: "Unknown server error"});
-        }
+        })
     }
     static async getUserGoals (req, res) {
         let userId = GoalController.getUserIdFromToken(req);
@@ -30,15 +26,12 @@ class GoalController extends BaseController  {
             searchParams.dateCompleted = {$exists:false};
         }
 
-        try{
+        //Returns the user's goals, attemptExecution wraps the function in a try catch block
+        GoalController.attemptExecution(async()=>{
             let userGoals = await GoalModel.find(searchParams);
             res.status(200);
             res.json({message : "Successfully retrieved goals", data : userGoals})
-        }
-        catch(ex){
-            res.status(500);
-            res.json({error: "Unknown server error"});
-        }
+        })
     }
 };
 

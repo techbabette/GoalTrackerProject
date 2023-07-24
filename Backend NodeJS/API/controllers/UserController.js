@@ -20,7 +20,10 @@ class UserController extends BaseController  {
             return;
         }
 
-        let existingUser = await UserModel.findOne({username});
+        //All database interactions are wrapped in a try catch block (attemptExecution)
+        let existingUser = await UserController.attemptExecution(async()=>{
+            return await UserModel.findOne({username});
+        })
 
         if(existingUser){
             res.status(409);
@@ -30,21 +33,20 @@ class UserController extends BaseController  {
 
         password = await bcrypt.hash(password, 10);
 
-        //Creating a new user if all data checks pass (Currently unsafe, unsalted and unhashed, use only in dev)
-        try{
+        //Creating a new user if all data checks pass, attemptExecution wraps the function in a try catch block
+        UserController.attemptExecution(async()=>{
             await UserModel.create({username, password, email});
             res.status(201);
             res.json({message: "Successfully created user"});
-        }
-        catch(e){
-            res.status(500);
-            res.json({error: "Unknown server error"});
-        }
+        })
     }
     static async authenticateUser (req, res) {
         let {username, password} = req.body;
 
-        let user = await UserModel.findOne({username: username});
+        //All database interactions are wrapped in a try catch block (attemptExecution)
+        let user = await UserController.attemptExecution(async()=>{
+            return await UserModel.findOne({username});
+        })
 
         if(!user){
             res.status(401);

@@ -6,6 +6,16 @@ class baseController{
     
         return userId;
     }
+    //Simple operation manager alternative
+    static attemptExecution(functionToExecute){
+        try{
+            return functionToExecute();
+        }
+        catch(ex){
+            res.status(500);
+            res.json({error: "Unknown server error"});
+        }
+    } 
 }
 
 module.exports = baseController
