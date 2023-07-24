@@ -7,6 +7,6 @@ const {amILoggedIn} = require("../middleware/authorization");
 
 router.post("/add", amILoggedIn, controller.createGoal);
 
-router.get("/", controller.getUserGoals);
+router.get("/", amILoggedIn, controller.getUserGoals);
 
 module.exports = router;
