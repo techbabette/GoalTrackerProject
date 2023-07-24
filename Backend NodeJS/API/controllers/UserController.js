@@ -59,7 +59,9 @@ module.exports = {
             return;
         }
 
+        //If authentication runs into no errors
+        let returnToken = JWT.sign({user_id: user._id, username}, process.env.TOKEN_KEY, {expiresIn: "1h"});
         res.status(200);
-        res.json({message: "Successfully authenticated user"});
+        res.json({message: "Successfully authenticated user", body: returnToken});
     }
 }
