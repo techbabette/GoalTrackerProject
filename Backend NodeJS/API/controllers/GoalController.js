@@ -1,4 +1,5 @@
 let GoalModel = require("../models/Goal.js");
+let ProgressModel = require("../models/Progress.js");
 let BaseController =  require("./BaseController.js");
 
 class GoalController extends BaseController  {
@@ -81,6 +82,8 @@ class GoalController extends BaseController  {
                 res.json({"error": "This progress entry does not belong to you"});
                 return;
             }
+
+            await ProgressModel.deleteMany({goalId});
 
             res.status(200);
             res.json({"message" : "Successfully removed goal"});
