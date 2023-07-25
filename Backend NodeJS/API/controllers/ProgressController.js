@@ -72,6 +72,31 @@ class ProgressController extends BaseController{
             res.json({"message": "Successfully edited progress entry"});
         })
     }
+    static async removeProgress (req, res){
+        let userId = ProgressController.getUserIdFromToken(req);
+
+        let {progressId} = req.body;
+
+        ProgressController.attemptExecution(async()=>{
+            let deletedProgress = await ProgressModel.findOneAndDelete({userId, _id:progressId})
+
+            if(!deletedProgress){
+                res.status(400);
+                res.json({"error": "This progress entry does not belong to you"});
+                return;
+            }
+
+            let goalProgressIsAttachedTo = await GoalModel.findById(deletedProgress.goalId);
+
+            goalProgressIsAttachedTo.repeats -= deletedProgress.repeats;
+
+            goalProgressIsAttachedTo.save();
+
+            res.status(200);
+            res.json({message: "Successfully deleted progress entry"})
+            return;
+        })
+    }
     static async getUserProgress (req, res){
         let userId = ProgressController.getUserIdFromToken(req);
 

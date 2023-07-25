@@ -9,6 +9,8 @@ router.post("/add", amILoggedIn, controller.createGoal);
 
 router.put("/edit", amILoggedIn, controller.editGoal);
 
+router.delete("/remove", amILoggedIn, controller.removeGoal);
+
 router.get("/", amILoggedIn, controller.getUserGoals);
 
 module.exports = router;

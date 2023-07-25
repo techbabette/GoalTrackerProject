@@ -68,6 +68,25 @@ class GoalController extends BaseController  {
             res.json({"message": "Successfully edited goal"});
         })
     }
+    static async removeGoal (req, res){
+        let userId = GoalController.getUserIdFromToken(req);
+
+        let {goalId} = req.body;
+
+        await GoalController.attemptExecution(async()=>{
+            let goalToRemove = await GoalModel.findOneAndDelete({userId, _id: goalId});
+
+            if(!goalToRemove){
+                res.status(400);
+                res.json({"error": "This progress entry does not belong to you"});
+                return;
+            }
+
+            res.status(200);
+            res.json({"message" : "Successfully removed goal"});
+            return;
+        }) 
+    }
     static async getUserGoals (req, res) {
         let userId = GoalController.getUserIdFromToken(req);
 
