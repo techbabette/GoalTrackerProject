@@ -1,81 +1,23 @@
-let GoalModel = require("../models/Goal.js");
-let ProgressModel = require("../models/Progress.js");
 let GoalService = require("../services/GoalService.js");
 let BaseController =  require("./BaseController.js");
 
 class GoalController extends BaseController  {
     static async createGoal (req, res)  {
-        let {name, unit, repeats, desiredRepeats, startDate, desiredEndDate} = req.body;
+        let result = await GoalController.attemptExecution(() => GoalService.createGoal(userId, req.body));
 
-        let userId = GoalController.getUserIdFromToken(req);
-
-        //Creates a new goal for the submitting user, attemptExecution wraps the function in a try catch block
-        GoalController.attemptExecution(async()=>{
-            let newGoal = await GoalModel.create({userId, name, unit, repeats, desiredRepeats, desiredEndDate, startDate});
-            res.json(newGoal);
-        })
-    }
-    static async editGoal (req, res) {
-        let {goalId, name, unit, repeats, desiredRepeats, startDate, desiredEndDate, dateCompleted, timeConversionRatio} = req.body;
-
-        let userId = GoalController.getUserIdFromToken(req);
-
-        let goalBelongsToUser = await GoalController.attemptExecution(async()=>{
-            return await GoalModel.findOne({userId, _id:goalId});
-        })
-
-        if(!goalBelongsToUser){
-            res.status(400);
-            res.json({"error": "This goal does not belong to you"});
+        if(result.success){
+            res.status(200);
+            res.json({message: result.message, data:result.data});
             return;
         }
 
-        let databaseGoal = goalBelongsToUser;
-
-        if(name){
-            databaseGoal.name = name;
-        }
-
-        if(unit){
-            databaseGoal.unit = unit;
-        }
-
-        if(repeats){
-            databaseGoal.repeats = repeats;
-        }
-
-        if(desiredRepeats){
-            databaseGoal.desiredRepeats = desiredRepeats;
-        }
-
-        if(startDate){
-            databaseGoal.startDate = startDate;
-        }
-
-        if(desiredEndDate){
-            databaseGoal.desiredEndDate = desiredEndDate;
-        }
-
-        if(dateCompleted){
-            databaseGoal.dateCompleted = dateCompleted;
-        }
-
-        if(timeConversionRatio){
-            databaseGoal.timeConversionRatio = timeConversionRatio;
-        }
-
-        await BaseController.attemptExecution(async()=>{
-            databaseGoal.save()
-            res.status(200);
-            res.json({"message": "Successfully edited goal"});
-        })
+        res.status(403);
+        res.json({error: result.message})
     }
-    static async removeGoal (req, res){
+    static async editGoal (req, res) {
         let userId = GoalController.getUserIdFromToken(req);
 
-        let {goalId} = req.body;
-
-        let result = await GoalService.removeGoal(userId, goalId);
+        let result = await GoalController.attemptExecution(() => GoalService.editGoal(userId, req.body), res);
 
         if(result.success){
             res.status(200);
@@ -84,27 +26,37 @@ class GoalController extends BaseController  {
         }
 
         res.status(403);
-        res.json({message: result.message})
+        res.json({error: result.message})
+    }
+    static async removeGoal (req, res){
+        let userId = GoalController.getUserIdFromToken(req);
+
+        let {goalId} = req.body;
+
+        let result = await GoalController.attemptExecution(() => GoalService.removeGoal(userId, goalId), res);
+
+        if(result.success){
+            res.status(200);
+            res.json({message: result.message});
+            return;
+        }
+
+        res.status(403);
+        res.json({error: result.message})
     }
     static async getUserGoals (req, res) {
         let userId = GoalController.getUserIdFromToken(req);
 
-        let searchParams = {userId};
+        let result = await GoalController.attemptExecution(() => GoalService.getUserGoals(userId, req.body), res);
 
-        if(req.body.onlyCompleted){
-            searchParams.dateCompleted = {$exists:true}
-        }
-
-        if(req.body.onlyUncompleted){
-            searchParams.dateCompleted = {$exists:false};
-        }
-
-        //Returns the user's goals, attemptExecution wraps the function in a try catch block
-        GoalController.attemptExecution(async()=>{
-            let userGoals = await GoalModel.find(searchParams);
+        if(result.success){
             res.status(200);
-            res.json({message : "Successfully retrieved goals", data : userGoals})
-        })
+            res.json({message: result.message, data: result.data});
+            return;
+        }
+
+        res.status(403);
+        res.json({error: result.message})
     }
 };
 

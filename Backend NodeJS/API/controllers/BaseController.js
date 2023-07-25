@@ -7,11 +7,13 @@ class baseController{
         return userId;
     }
     //Simple operation manager alternative
-    static attemptExecution(functionToExecute){
+    //Placeholder res object during service transition
+    static attemptExecution(functionToExecute, res = {}){
         try{
             return functionToExecute();
         }
         catch(ex){
+            console.log(ex);
             res.status(500);
             res.json({error: "Unknown server error"});
         }
