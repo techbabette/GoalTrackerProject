@@ -23,12 +23,51 @@ class ProgressController extends BaseController{
 
             let goal = await GoalModel.findById(goalId);
 
-            goal.repeats += repeats;
+            goal.repeats += parseInt(repeats);
 
             goal.save();
 
             res.status(201);
-            res.json({"message": "Successfully added progress"});
+            res.json({"message": "Successfully added progress entry"});
+        })
+    }
+    static async editProgress (req, res){
+        let userId = ProgressController.getUserIdFromToken(req);
+
+        let {progressId, notes, repeats, date} = req.body;
+
+        let databaseProgress = await ProgressController.attemptExecution(async()=>{
+            return await ProgressModel.findOne({userId, _id : progressId});
+        });
+
+        if(!databaseProgress){
+            res.status(400);
+            res.json({"error": "This progress entry does not belong to you"});
+            return;
+        }
+
+        let goalProgressIsAttachedTo = await ProgressController.attemptExecution(async()=>{
+            return await GoalModel.findById(databaseProgress.goalId);
+        })
+
+        if(repeats){
+            goalProgressIsAttachedTo.repeats += repeats - databaseProgress.repeats;
+            databaseProgress.repeats = repeats;
+        }
+
+        if(notes){
+            databaseProgress.notes = notes;
+        }
+
+        if(date){
+            databaseProgress.date = date;
+        }
+
+        await ProgressController.attemptExecution(async()=>{
+            databaseProgress.save()
+            goalProgressIsAttachedTo.save();
+            res.status(200);
+            res.json({"message": "Successfully edited progress entry"});
         })
     }
     static async getUserProgress (req, res){

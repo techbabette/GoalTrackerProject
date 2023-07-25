@@ -18,7 +18,7 @@ const progressSchema = Schema({
     date: {
         type: Date,
         required: false,
-        default: new Date()
+        default: Date.now
     },
     notes: {
         type: String,
