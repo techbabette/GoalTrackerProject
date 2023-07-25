@@ -34,7 +34,9 @@ class ProgressService extends BaseService{
 
         let {progressId, notes, repeats, date} = progressInformation;
 
-        let databaseProgress = await ProgressModel.findOne({userId, _id : progressId});
+        let databaseProgress
+
+        databaseProgress = await ProgressModel.findOne({userId, _id : progressId});
 
         if(!databaseProgress){
             responseObject.success = false;

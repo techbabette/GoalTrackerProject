@@ -8,14 +8,12 @@ class baseController{
     }
     //Simple operation manager alternative
     //Placeholder res object during service transition
-    static attemptExecution(functionToExecute, res = {}){
+    static async attemptExecution(functionToExecute, res = {}){
         try{
-            return functionToExecute();
+            return await functionToExecute();
         }
         catch(ex){
-            console.log(ex);
-            res.status(500);
-            res.json({error: "Unknown server error"});
+            return {message: "Server error", success : false, serverError : true};
         }
     } 
 }

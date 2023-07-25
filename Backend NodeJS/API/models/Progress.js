@@ -4,11 +4,11 @@ const Schema = mongoose.Schema;
 const progressSchema = Schema({
     //Redundant field for future faster reading speed (Showing users all their progress)
     userId:{
-        type: String,
+        type: mongoose.ObjectId,
         required: true
     },
     goalId:{
-        type: String,
+        type: mongoose.ObjectId,
         required: true
     },
     repeats:{

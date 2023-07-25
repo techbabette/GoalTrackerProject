@@ -3,30 +3,45 @@ let BaseController =  require("./BaseController.js");
 
 class GoalController extends BaseController  {
     static async createGoal (req, res)  {
-        let result = await GoalController.attemptExecution(() => GoalService.createGoal(userId, req.body));
+        let userId = GoalController.getUserIdFromToken(req);
 
-        if(result.success){
-            res.status(200);
-            res.json({message: result.message, data:result.data});
+        let result = await GoalController.attemptExecution(() => GoalService.createGoal(userId, req.body), res);
+
+        if(result.serverError){
+            res.status(500)
+            res.json(result);
             return;
         }
 
-        res.status(403);
-        res.json({error: result.message})
+        if(!result.success){
+            res.status(403);
+            res.json(result)
+            return;
+        }
+
+        res.status(200);
+        res.json(result);
     }
     static async editGoal (req, res) {
         let userId = GoalController.getUserIdFromToken(req);
 
         let result = await GoalController.attemptExecution(() => GoalService.editGoal(userId, req.body), res);
 
-        if(result.success){
-            res.status(200);
-            res.json({message: result.message});
+        if(result.serverError){
+            res.status(500)
+            res.json(result);
             return;
         }
 
-        res.status(403);
-        res.json({error: result.message})
+        if(!result.success){
+            res.status(403);
+            res.json(result)
+            return;
+        }
+
+        res.status(200);
+        res.json(result);
+        return;
     }
     static async removeGoal (req, res){
         let userId = GoalController.getUserIdFromToken(req);
@@ -35,28 +50,42 @@ class GoalController extends BaseController  {
 
         let result = await GoalController.attemptExecution(() => GoalService.removeGoal(userId, goalId), res);
 
-        if(result.success){
-            res.status(200);
-            res.json({message: result.message});
+        if(result.serverError){
+            res.status(500)
+            res.json(result);
             return;
         }
 
-        res.status(403);
-        res.json({error: result.message})
+        if(!result.success){
+            res.status(403);
+            res.json(result);
+            return;
+        }
+
+        res.status(200);
+        res.json(result);
+        return;
     }
     static async getUserGoals (req, res) {
         let userId = GoalController.getUserIdFromToken(req);
 
         let result = await GoalController.attemptExecution(() => GoalService.getUserGoals(userId, req.body), res);
 
-        if(result.success){
-            res.status(200);
-            res.json({message: result.message, data: result.data});
+        if(result.serverError){
+            res.status(500)
+            res.json(result);
             return;
         }
 
-        res.status(403);
-        res.json({error: result.message})
+        if(!result.success){
+            res.status(403);
+            res.json(result)
+            return;
+        }
+
+        res.status(200);
+        res.json(result);
+        return;
     }
 };
 

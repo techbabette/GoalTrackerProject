@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const goalSchema = Schema({
     userId: {
-        type: String,
+        type: mongoose.ObjectId,
         required: true
     },
     name:{

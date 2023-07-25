@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const UserActivationLinkSchema = Schema({
     userId:{
-        type: String,
+        type: mongoose.ObjectId,
         required: true
     },
     activationHash: {
