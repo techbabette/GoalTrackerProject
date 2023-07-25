@@ -26,10 +26,18 @@ const goalSchema = Schema({
     startDate: {
         type: Date,
         required: false,
-        default: new Date()
+        default: Date.now
     },
     desiredEndDate: {
         type: Date,
+        required: false
+    },
+    dateCompleted: {
+        type: Date,
+        required: false
+    },
+    timeConversionRatio: {
+        type: Number,
         required: false
     }
 })

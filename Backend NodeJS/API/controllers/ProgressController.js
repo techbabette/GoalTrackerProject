@@ -23,6 +23,7 @@ class ProgressController extends BaseController{
 
             let goal = await GoalModel.findById(goalId);
 
+            //Triggers would be preferable to this
             goal.repeats += parseInt(repeats);
 
             goal.save();
@@ -51,6 +52,7 @@ class ProgressController extends BaseController{
         })
 
         if(repeats){
+            //Triggers would be preferable to this
             goalProgressIsAttachedTo.repeats += repeats - databaseProgress.repeats;
             databaseProgress.repeats = repeats;
         }

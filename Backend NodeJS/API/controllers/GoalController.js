@@ -13,6 +13,61 @@ class GoalController extends BaseController  {
             res.json(newGoal);
         })
     }
+    static async editGoal (req, res) {
+        let {goalId, name, unit, repeats, desiredRepeats, startDate, desiredEndDate, dateCompleted, timeConversionRatio} = req.body;
+
+        let userId = GoalController.getUserIdFromToken(req);
+
+        let goalBelongsToUser = await GoalController.attemptExecution(async()=>{
+            return await GoalModel.findOne({userId, _id:goalId});
+        })
+
+        if(!goalBelongsToUser){
+            res.status(400);
+            res.json({"error": "This goal does not belong to you"});
+            return;
+        }
+
+        let databaseGoal = goalBelongsToUser;
+
+        if(name){
+            databaseGoal.name = name;
+        }
+
+        if(unit){
+            databaseGoal.unit = unit;
+        }
+
+        if(repeats){
+            databaseGoal.repeats = repeats;
+        }
+
+        if(desiredRepeats){
+            databaseGoal.desiredRepeats = desiredRepeats;
+        }
+
+        if(startDate){
+            databaseGoal.startDate = startDate;
+        }
+
+        if(desiredEndDate){
+            databaseGoal.desiredEndDate = desiredEndDate;
+        }
+
+        if(dateCompleted){
+            databaseGoal.dateCompleted = dateCompleted;
+        }
+
+        if(timeConversionRatio){
+            databaseGoal.timeConversionRatio = timeConversionRatio;
+        }
+
+        await BaseController.attemptExecution(async()=>{
+            databaseGoal.save()
+            res.status(200);
+            res.json({"message": "Successfully edited goal"});
+        })
+    }
     static async getUserGoals (req, res) {
         let userId = GoalController.getUserIdFromToken(req);
 
