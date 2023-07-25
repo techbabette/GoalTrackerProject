@@ -17,7 +17,7 @@ class UserController extends BaseController  {
 
         //Data validation
 
-        if(password != repeatPassword){
+        if(password !== repeatPassword){
             res.status(400);
             res.json({error: "Passwords must match"});
             return;
@@ -25,12 +25,12 @@ class UserController extends BaseController  {
 
         //All database interactions are wrapped in a try catch block (attemptExecution)
         let existingUser = await UserController.attemptExecution(async()=>{
-            return await UserModel.findOne({username});
+            return await UserModel.findOne({email});
         })
 
         if(existingUser){
             res.status(409);
-            res.json({error : "User with this username already exists"});
+            res.json({error : "User with this email already exists"});
             return;
         }
 
@@ -97,16 +97,16 @@ class UserController extends BaseController  {
         })
     }
     static async authenticateUser (req, res) {
-        let {username, password} = req.body;
+        let {email, password} = req.body;
 
         //All database interactions are wrapped in a try catch block (attemptExecution)
         let user = await UserController.attemptExecution(async()=>{
-            return await UserModel.findOne({username});
+            return await UserModel.findOne({email});
         })
 
         if(!user){
             res.status(401);
-            res.json({error: "No user with that username exists"});
+            res.json({error: "No user with that email exists"});
             return;
         }
 
