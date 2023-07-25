@@ -1,5 +1,6 @@
 let UserModel = require("../models/User.js");
 let BaseController =  require("./BaseController.js");
+let NodeMailer = require("nodemailer");
 
 let bcrypt = require("bcryptjs");
 
@@ -33,9 +34,25 @@ class UserController extends BaseController  {
 
         password = await bcrypt.hash(password, 10);
 
+        let transporter = NodeMailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD
+            }
+        });
+
+        let mail = {
+            from: "GoalTracker@gmail.com",
+            to: email,
+            subject: "Your GoalTracker activation link",
+            html: `<h1>Welcome to GoalTracker ${username}</h1><a>Click me to activate your account!</a>`
+        };
+
         //Creating a new user if all data checks pass, attemptExecution wraps the function in a try catch block
         UserController.attemptExecution(async()=>{
             await UserModel.create({username, password, email});
+            await transporter.sendMail(mail);
             res.status(201);
             res.json({message: "Successfully created user"});
         })
