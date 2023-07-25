@@ -13,6 +13,11 @@ const userSchema = Schema({
     email: {
         type: String,
         required: true
+    },
+    activated: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 })
 

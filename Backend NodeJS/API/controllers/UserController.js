@@ -54,6 +54,12 @@ class UserController extends BaseController  {
             return;
         }
 
+        if(!user.activated){
+            res.status(401);
+            res.json({error: "You must confirm your email first"});
+            return;
+        }
+
         let passwordIsCorrect = await bcrypt.compare(password, user.password);
 
         if(!passwordIsCorrect){
