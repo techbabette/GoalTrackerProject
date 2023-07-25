@@ -1,8 +1,10 @@
 let UserModel = require("../models/User.js");
+let UserActivationLinkModel = require("../models/UserActivationLink.js");
 let BaseController =  require("./BaseController.js");
 let NodeMailer = require("nodemailer");
 
 let bcrypt = require("bcryptjs");
+let crypto = require("crypto");
 
 const JWT = require("jsonwebtoken");
 
@@ -42,19 +44,56 @@ class UserController extends BaseController  {
             }
         });
 
+        let activationHash = crypto.randomBytes(20).toString("hex");
+
+        //Temporary, should lead to frontend application
+        let activationLink = `${req.protocol}://${req.get('host')}/users/activate/${activationHash}`; 
+
         let mail = {
             from: "GoalTracker@gmail.com",
             to: email,
             subject: "Your GoalTracker activation link",
-            html: `<h1>Welcome to GoalTracker ${username}</h1><a>Click me to activate your account!</a>`
+            html: `<h1>Welcome to GoalTracker ${username}</h1><a href="${activationLink}">Click me to activate your account!</a>`
         };
 
         //Creating a new user if all data checks pass, attemptExecution wraps the function in a try catch block
         UserController.attemptExecution(async()=>{
-            await UserModel.create({username, password, email});
+            let newUser = await UserModel.create({username, password, email});
+            await UserActivationLinkModel.create({userId: newUser._id, activationHash})
             await transporter.sendMail(mail);
             res.status(201);
             res.json({message: "Successfully created user"});
+        })
+    }
+    static async activateUser(req, res){
+        let requestedActivationHash = req.params.activationHash;
+
+        let databaseActivationHash;
+
+        let userToActivate = await UserController.attemptExecution(async()=>{
+            databaseActivationHash = await UserActivationLinkModel.findOne({activationHash: requestedActivationHash})
+
+            if(databaseActivationHash){
+                return await UserModel.findById(databaseActivationHash.userId);
+            }
+
+            return false;
+        })
+
+        if(!userToActivate){
+            res.status(400);
+            res.json({"error": "Invalid activation hash"});
+            return;
+        }
+
+        userToActivate.activated = true;
+
+        await UserController.attemptExecution(async()=>{
+            await UserActivationLinkModel.deleteOne({_id: databaseActivationHash._id});
+            await userToActivate.save();
+            res.status(200);
+            res.json({message: "Successfully activated account"});
+            return;
         })
     }
     static async authenticateUser (req, res) {
