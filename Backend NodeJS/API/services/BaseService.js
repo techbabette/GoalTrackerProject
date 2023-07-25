@@ -1,13 +1,5 @@
 class baseService{
-    //Simple operation manager alternative
-    static attemptExecution(functionToExecute){
-        try{
-            return functionToExecute();
-        }
-        catch(ex){
-            return {success: false, message: "Unknown server error"};
-        }
-    } 
+    //Available in case all services require certain functionality in the future
 }
 
 module.exports = baseService
