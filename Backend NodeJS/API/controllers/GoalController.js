@@ -1,5 +1,6 @@
 let GoalModel = require("../models/Goal.js");
 let ProgressModel = require("../models/Progress.js");
+let GoalService = require("../services/GoalService.js");
 let BaseController =  require("./BaseController.js");
 
 class GoalController extends BaseController  {
@@ -74,21 +75,16 @@ class GoalController extends BaseController  {
 
         let {goalId} = req.body;
 
-        await GoalController.attemptExecution(async()=>{
-            let goalToRemove = await GoalModel.findOneAndDelete({userId, _id: goalId});
+        let result = await GoalService.removeGoal(userId, goalId);
 
-            if(!goalToRemove){
-                res.status(400);
-                res.json({"error": "This progress entry does not belong to you"});
-                return;
-            }
-
-            await ProgressModel.deleteMany({goalId});
-
+        if(result.success){
             res.status(200);
-            res.json({"message" : "Successfully removed goal"});
+            res.json({message: result.message});
             return;
-        }) 
+        }
+
+        res.status(403);
+        res.json({message: result.message})
     }
     static async getUserGoals (req, res) {
         let userId = GoalController.getUserIdFromToken(req);
