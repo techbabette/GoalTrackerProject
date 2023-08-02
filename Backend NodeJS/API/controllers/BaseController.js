@@ -13,6 +13,7 @@ class baseController{
             return await functionToExecute();
         }
         catch(ex){
+            console.log(ex);
             return {message: "Server error", success : false, serverError : true};
         }
     } 
