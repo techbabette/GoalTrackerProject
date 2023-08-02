@@ -5,7 +5,7 @@ class ProgressController extends BaseController{
     static async addProgress (req, res){
         let userId = ProgressController.getUserIdFromToken(req);
 
-        let result = await ProgressController.attemptExecution(() => ProgressService.addProgress(userId, req.body), res);
+        let result = await ProgressController.attemptExecution(() => ProgressService.addProgress(userId, req.body));
 
         if(result.serverError){
             res.status(500)
@@ -26,7 +26,7 @@ class ProgressController extends BaseController{
     static async editProgress (req, res){
         let userId = ProgressController.getUserIdFromToken(req);
 
-        let result = await ProgressController.attemptExecution(() => ProgressService.editProgress(userId, req.body), res);
+        let result = await ProgressController.attemptExecution(() => ProgressService.editProgress(userId, req.body));
 
         if(result.serverError){
             res.status(500)
@@ -47,7 +47,7 @@ class ProgressController extends BaseController{
     static async removeProgress (req, res){
         let userId = ProgressController.getUserIdFromToken(req);
 
-        let result = await ProgressController.attemptExecution(() => ProgressService.removeProgress(userId, req.body), res);
+        let result = await ProgressController.attemptExecution(() => ProgressService.removeProgress(userId, req.body));
 
         if(result.serverError){
             res.status(500)
@@ -68,7 +68,7 @@ class ProgressController extends BaseController{
     static async getUserProgress (req, res){
         let userId = ProgressController.getUserIdFromToken(req);
 
-        let result = await ProgressController.attemptExecution(() => ProgressService.getUserProgress(userId), res);
+        let result = await ProgressController.attemptExecution(() => ProgressService.getUserProgress(userId));
 
         if(result.serverError){
             res.status(500)

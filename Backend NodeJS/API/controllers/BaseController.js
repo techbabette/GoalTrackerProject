@@ -8,7 +8,7 @@ class baseController{
     }
     //Simple operation manager alternative
     //Placeholder res object during service transition
-    static async attemptExecution(functionToExecute, res = {}){
+    static async attemptExecution(functionToExecute){
         try{
             return await functionToExecute();
         }

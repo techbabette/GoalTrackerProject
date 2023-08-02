@@ -5,7 +5,7 @@ class GoalController extends BaseController  {
     static async createGoal (req, res)  {
         let userId = GoalController.getUserIdFromToken(req);
 
-        let result = await GoalController.attemptExecution(() => GoalService.createGoal(userId, req.body), res);
+        let result = await GoalController.attemptExecution(() => GoalService.createGoal(userId, req.body));
 
         if(result.serverError){
             res.status(500)
@@ -25,7 +25,7 @@ class GoalController extends BaseController  {
     static async editGoal (req, res) {
         let userId = GoalController.getUserIdFromToken(req);
 
-        let result = await GoalController.attemptExecution(() => GoalService.editGoal(userId, req.body), res);
+        let result = await GoalController.attemptExecution(() => GoalService.editGoal(userId, req.body));
 
         if(result.serverError){
             res.status(500)
@@ -48,7 +48,7 @@ class GoalController extends BaseController  {
 
         let {goalId} = req.body;
 
-        let result = await GoalController.attemptExecution(() => GoalService.removeGoal(userId, goalId), res);
+        let result = await GoalController.attemptExecution(() => GoalService.removeGoal(userId, goalId));
 
         if(result.serverError){
             res.status(500)
@@ -69,7 +69,7 @@ class GoalController extends BaseController  {
     static async getUserGoals (req, res) {
         let userId = GoalController.getUserIdFromToken(req);
 
-        let result = await GoalController.attemptExecution(() => GoalService.getUserGoals(userId, req.body), res);
+        let result = await GoalController.attemptExecution(() => GoalService.getUserGoals(userId, req.body));
 
         if(result.serverError){
             res.status(500)
