@@ -1,13 +1,4 @@
-let UserModel = require("../models/User.js");
-let UserActivationLinkModel = require("../models/UserActivationLink.js");
 let BaseController =  require("./BaseController.js");
-let NodeMailer = require("nodemailer");
-
-let bcrypt = require("bcryptjs");
-let crypto = require("crypto");
-
-const JWT = require("jsonwebtoken");
-
 let UserService = require("../services/UserService.js");
 
 class UserController extends BaseController  {
