@@ -12,13 +12,14 @@ const JWT = require("jsonwebtoken");
 class UserService extends BaseService{
     static async createUser (userInformation){
         let responseObject = {};
-
+        responseObject.errors = {};
         let {username, password, repeatPassword, email} = userInformation;
 
         //Data validation
 
         if(password !== repeatPassword){
             responseObject.message = "Passwords must match";
+            responseObject.errors.passwordError = "Passwords must match";
             responseObject.success = false;
             return responseObject;
         }
@@ -27,6 +28,7 @@ class UserService extends BaseService{
 
         if(existingUser){
             responseObject.message = "User with this email already exists";
+            responseObject.errors.emailError = "User with this email already exists";
             responseObject.success = false;
             return responseObject;
         }
@@ -89,7 +91,7 @@ class UserService extends BaseService{
     }
     static async authenticateUser (userInformation) {
         let responseObject = {};
-        
+        responseObject.errors = {};
         let {email, password} = userInformation;
 
         //All database interactions are wrapped in a try catch block (attemptExecution)
@@ -97,12 +99,14 @@ class UserService extends BaseService{
 
         if(!user){
             responseObject.message = "No user with that email exists";
+            responseObject.errors.emailError = "No user with that email exists";
             responseObject.success = false;
             return responseObject;
         }
 
         if(!user.activated){
             responseObject.message = "You must confirm your email first";
+            responseObject.errors.emailError = "You must confirm your email first";
             responseObject.success = false;
             return responseObject;
         }
@@ -111,6 +115,7 @@ class UserService extends BaseService{
 
         if(!passwordIsCorrect){
             responseObject.message = "Incorrect password";
+            responseObject.errors.passwordError = "Incorrect password";
             responseObject.success = false;
             return responseObject;
         }
