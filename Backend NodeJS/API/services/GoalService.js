@@ -89,6 +89,10 @@ class GoalService extends BaseService{
     static async getUserGoals(userId, additionalParameters){
         let returnObject = {};
 
+        let searchParams = {};
+
+        searchParams.userId = userId;
+
         if(additionalParameters.onlyCompleted){
             searchParams.dateCompleted = {$exists:true}
         }
