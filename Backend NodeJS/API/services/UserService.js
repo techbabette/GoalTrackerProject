@@ -46,7 +46,7 @@ class UserService extends BaseService{
         let activationHash = crypto.randomBytes(20).toString("hex");
 
         //Temporary, should lead to frontend application
-        let activationLink = `http://localhost:3000/users/activate/${activationHash}`; 
+        let activationLink = `${process.env.ACTIVATION_URL}${activationHash}`; 
 
         let mail = {
             from: "GoalTracker@gmail.com",
