@@ -19,7 +19,7 @@ class UserService extends BaseService{
 
         if(password !== repeatPassword){
             responseObject.message = "Passwords must match";
-            responseObject.errors.passwordError = "Passwords must match";
+            responseObject.errors.repeatPasswordError = "Passwords must match";
             responseObject.success = false;
             return responseObject;
         }

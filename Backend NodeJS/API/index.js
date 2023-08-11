@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose =  require("mongoose");
 const bodyParser =  require("body-parser");
+const cors = require("cors");
 require('dotenv').config();
 
 const app = express();
@@ -15,6 +16,8 @@ let ProgressRouter = require("./routes/Progress");
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(res => console.log(`Connection Succesful ${res}`))
 .catch(err => console.log(`Error in DB connection ${err}`));
+
+app.use(cors());
 
 app.use(express.json());
 app.use(URLParser);
