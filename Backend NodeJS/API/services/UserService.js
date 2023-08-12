@@ -95,32 +95,14 @@ class UserService extends BaseService{
 
         //Data validation
 
-        for(let usernameCheck of this.usernameChecks){
-            if(!usernameCheck.test(username)){
-                responseObject.message = usernameCheck.message;
-                responseObject.errors.usernameError = usernameCheck.message;
-                responseObject.success = false;
-                return responseObject;
-            }
-        }
+        this.runTests(this.usernameChecks, username, responseObject);
+        if(responseObject.success === false) return responseObject;
 
-        for(let passwordCheck of this.passwordChecks){
-            if(!passwordCheck.test(password)){
-                responseObject.message = passwordCheck.message;
-                responseObject.errors.passwordError = passwordCheck.message;
-                responseObject.success = false;
-                return responseObject;
-            }
-        }
+        this.runTests(this.passwordChecks, password, responseObject);
+        if(responseObject.success === false) return responseObject;
 
-        for(let emailCheck of this.emailChecks){
-            if(!emailCheck.test(email)){
-                responseObject.message = emailCheck.message;
-                responseObject.errors.emailError = emailCheck.message;
-                responseObject.success = false;
-                return responseObject;
-            }
-        }
+        this.runTests(this.emailChecks, email, responseObject);
+        if(responseObject.success === false) return responseObject;
 
         if(password !== repeatPassword){
             responseObject.message = "Passwords must match";
