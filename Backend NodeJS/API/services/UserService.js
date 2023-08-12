@@ -10,12 +10,117 @@ let crypto = require("crypto");
 const JWT = require("jsonwebtoken");
 
 class UserService extends BaseService{
+    static passwordChecks = [
+        {
+            test : function(text){
+                return text.length >= 6;
+            },
+            message : "Password must be at least six characters long"
+        },
+        {
+            test : function(text){
+                let regex = /[0-9]/
+                return regex.test(text);
+            },
+            message : "Password must contain a number"
+        },
+        {
+            test : function(text){
+                let regex = /[A-Z]/
+                return regex.test(text);
+            },
+            message : "Password must contain at least one uppercase letter"
+        },
+        {
+            test : function(text){
+                let regex = /[a-z]/
+                return regex.test(text);
+            },
+            message : "Password must contain at least one lowercase letter"
+        },
+        {
+            test : function(text){
+                let regex = /^[A-Za-z0-9!\.\$]{6,}$/
+                return regex.test(text);
+            },
+            message : 'Password can only contain characters A-Z, digits and "!" "." and "$"'
+        }
+    ]
+
+    static usernameChecks = [
+        {
+            test : function(text){
+                let regex = /^[A-Za-z0-9]{3,30}$/
+                return regex.test(text);
+            },
+            message : "Username can only contain digits and alphabet letters and must be three to thirty characters long"
+        }
+    ]
+
+    static emailChecks = [
+        {
+            test : function(text){
+                let regex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
+                return regex.test(text);
+            },
+            message : "Invalid email"
+        },
+        {
+            test : function(text){
+                return !(text.length > 254);
+            },
+            message : "Invalid email"
+        },
+        {
+            test : function(text){
+                let parts = text.split("@");
+                return !(parts[0].length > 64);
+            },
+            message : "Invalid email"
+        },
+        {
+            test : function(text){
+                let domainParts = text.split("@")[1].split(".");
+
+                return !(domainParts.some(part => part.length > 63));
+            },
+            message : "Invalid email"
+        }
+    ]
+
     static async createUser (userInformation){
         let responseObject = {};
         responseObject.errors = {};
         let {username, password, repeatPassword, email} = userInformation;
 
         //Data validation
+
+        for(let usernameCheck of this.usernameChecks){
+            if(!usernameCheck.test(username)){
+                responseObject.message = usernameCheck.message;
+                responseObject.errors.usernameError = usernameCheck.message;
+                responseObject.success = false;
+                return responseObject;
+            }
+        }
+
+        for(let passwordCheck of this.passwordChecks){
+            if(!passwordCheck.test(password)){
+                responseObject.message = passwordCheck.message;
+                responseObject.errors.passwordError = passwordCheck.message;
+                responseObject.success = false;
+                return responseObject;
+            }
+        }
+
+        for(let emailCheck of this.emailChecks){
+            if(!emailCheck.test(email)){
+                responseObject.message = emailCheck.message;
+                responseObject.errors.emailError = emailCheck.message;
+                responseObject.success = false;
+                return responseObject;
+            }
+        }
 
         if(password !== repeatPassword){
             responseObject.message = "Passwords must match";
