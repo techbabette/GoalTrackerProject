@@ -89,20 +89,21 @@ class UserService extends BaseService{
     ]
 
     static async createUser (userInformation){
-        let responseObject = {};
-        responseObject.errors = {};
+        let responseObject = this.createResponseObject();
         let {username, password, repeatPassword, email} = userInformation;
 
         //Data validation
 
-        this.runTests(this.usernameChecks, username, responseObject);
+        await this.runTests(this.usernameChecks, username, responseObject);
         if(responseObject.success === false) return responseObject;
 
-        this.runTests(this.passwordChecks, password, responseObject);
+        await this.runTests(this.passwordChecks, password, responseObject);
         if(responseObject.success === false) return responseObject;
 
-        this.runTests(this.emailChecks, email, responseObject);
+        await this.runTests(this.emailChecks, email, responseObject);
         if(responseObject.success === false) return responseObject;
+
+        console.log(responseObject)
 
         if(password !== repeatPassword){
             responseObject.message = "Passwords must match";

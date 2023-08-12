@@ -2,6 +2,9 @@ let ResponseObject = require("./ServiceResponseObject");
 
 class baseService{
     //Available in case all services require certain functionality in the future
+    static createResponseObject(){
+        return new ResponseObject();
+    }
     static async runTests (testArray, testSubject, responseObject){
         for(let singleTest of testArray){
             let result = await(singleTest.test(testSubject));
