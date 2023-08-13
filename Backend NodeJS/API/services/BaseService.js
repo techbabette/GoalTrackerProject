@@ -5,12 +5,15 @@ class baseService{
     static createResponseObject(){
         return new ResponseObject();
     }
-    static async runTests (testArray, testSubject, responseObject){
+    static async runTests (testArray, testSubject, responseObject, errorName = ""){
         for(let singleTest of testArray){
             let result = await(singleTest.test(testSubject));
             if(!result){
                 responseObject.message = singleTest.message;
-                responseObject.errors.usernameError = singleTest.message;
+
+                if(errorName);
+                responseObject.errors[errorName] = singleTest.message;
+                
                 responseObject.success = false;
                 return responseObject;
             }

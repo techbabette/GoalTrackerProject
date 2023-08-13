@@ -94,16 +94,14 @@ class UserService extends BaseService{
 
         //Data validation
 
-        await this.runTests(this.usernameChecks, username, responseObject);
+        await this.runTests(this.usernameChecks, username, responseObject, "usernameError");
         if(responseObject.success === false) return responseObject;
 
-        await this.runTests(this.passwordChecks, password, responseObject);
+        await this.runTests(this.passwordChecks, password, responseObject, "passwordError");
         if(responseObject.success === false) return responseObject;
 
-        await this.runTests(this.emailChecks, email, responseObject);
+        await this.runTests(this.emailChecks, email, responseObject, "emailError");
         if(responseObject.success === false) return responseObject;
-
-        console.log(responseObject)
 
         if(password !== repeatPassword){
             responseObject.message = "Passwords must match";
