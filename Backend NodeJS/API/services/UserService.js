@@ -119,30 +119,30 @@ class UserService extends BaseService{
             return responseObject;
         }
 
-        password = await bcrypt.hash(password, 10);
-
-        let transporter = NodeMailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASSWORD
-            }
-        });
-
-        let activationHash = crypto.randomBytes(20).toString("hex");
-
-        //Temporary, should lead to frontend application
-        let activationLink = `${process.env.ACTIVATION_URL}${activationHash}`; 
-
-        let mail = {
-            from: "GoalTracker@gmail.com",
-            to: email,
-            subject: "Your GoalTracker activation link",
-            html: `<h1>Welcome to GoalTracker ${username}</h1><a href="${activationLink}">Click me to activate your account!</a>`
-        };
-
         //Creating a new user if all data checks pass, only if service isn't undergoing testing
         if(!testing){
+            password = await bcrypt.hash(password, 10);
+
+            let transporter = NodeMailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASSWORD
+                }
+            });
+    
+            let activationHash = crypto.randomBytes(20).toString("hex");
+    
+            //Temporary, should lead to frontend application
+            let activationLink = `${process.env.ACTIVATION_URL}${activationHash}`; 
+    
+            let mail = {
+                from: "GoalTracker@gmail.com",
+                to: email,
+                subject: "Your GoalTracker activation link",
+                html: `<h1>Welcome to GoalTracker ${username}</h1><a href="${activationLink}">Click me to activate your account!</a>`
+            };
+
             let newUser = await UserModel.create({username, password, email});
             await UserActivationLinkModel.create({userId: newUser._id, activationHash})
             await transporter.sendMail(mail);
