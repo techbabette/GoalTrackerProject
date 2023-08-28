@@ -9,7 +9,7 @@ function generateRandomUsername(length = 4){
     return (Math.random().toString(36)+'00000000000000000').slice(2, length+2)
 }
 
-describe("User registration service", () =>{
+describe("User registration", () =>{
     let correctUser;
 
     beforeEach(() => {
@@ -41,6 +41,38 @@ describe("User registration service", () =>{
 
     it("Can pass tests with correct information", async () => {
         let result = await UserService.createUser(correctUser, true);
+        assert.ok(result.success === true);
+    })
+})
+describe("User authentication", () => {
+    let correctInformation;
+
+    beforeEach(() => {
+        correctInformation = {
+            email : process.env.EMAIL_USER,
+            password : "Password3"
+        }
+    })
+    it("Can catch non-existing email", async () => {
+        correctInformation.email = "incorrectemail@gmail.com";
+        let result = await UserService.authenticateUser(correctInformation);
         assert.ok(result.success === false);
+    })
+
+    it("Can catch inactive account", async () => {
+        correctInformation.email = "inactiveemail@gmail.com";
+        let result = await UserService.authenticateUser(correctInformation);
+        assert.ok(result.success === false);
+    })
+
+    it("Can catch incorrect email password pair", async () => {
+        correctInformation.password = "wrongpassWord1";
+        let result = await UserService.authenticateUser(correctInformation);
+        assert.ok(result.success === false);
+    })
+
+    it("Can authenticate user with correct information", async () => {
+        let result = await UserService.authenticateUser(correctInformation);
+        assert.ok(result.success === true);
     })
 })
