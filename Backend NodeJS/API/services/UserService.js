@@ -88,7 +88,7 @@ class UserService extends BaseService{
         }
     ]
 
-    static async createUser (userInformation){
+    static async createUser (userInformation, testing = false){
         let responseObject = this.createResponseObject();
         let {username, password, repeatPassword, email} = userInformation;
 
@@ -141,10 +141,12 @@ class UserService extends BaseService{
             html: `<h1>Welcome to GoalTracker ${username}</h1><a href="${activationLink}">Click me to activate your account!</a>`
         };
 
-        //Creating a new user if all data checks pass, attemptExecution wraps the function in a try catch block
-        let newUser = await UserModel.create({username, password, email});
-        await UserActivationLinkModel.create({userId: newUser._id, activationHash})
-        await transporter.sendMail(mail);
+        //Creating a new user if all data checks pass, only if service isn't undergoing testing
+        if(!testing){
+            let newUser = await UserModel.create({username, password, email});
+            await UserActivationLinkModel.create({userId: newUser._id, activationHash})
+            await transporter.sendMail(mail);
+        }
 
         responseObject.message = "Successfully created user";
         responseObject.success = true;
