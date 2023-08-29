@@ -9,29 +9,30 @@ class UserController extends BaseController  {
     }
     static async createUser (req, res){
         //First see if user request is valid and can create user
-        let result = await BaseController.attemptExecution(()=>UserService.createUser(req.body));
-
-        if(result.serverError){
+        try{
+            let result = UserService.createUser(req.body);
+    
+            if(!result.success){
+                res.status(401);
+                res.json(result)
+                return;
+            }
+    
+            //If the checks pass, create a new user in the database
+            let newUser = await UserData.createUser(req.body);
+            let activationHash = await UserData.createActivationHash(newUser._id);
+    
+            //Send an activation email, possibly send email after res so user experience is smoother
+            await EmailService.sendActivationEmail(activationHash, newUser.email, newUser.username);
+    
+            res.status(200);
+            res.json(result);
+        }
+        catch{
             res.status(500)
             res.json(result);
             return;
         }
-
-        if(!result.success){
-            res.status(401);
-            res.json(result)
-            return;
-        }
-
-        //If the checks pass, create a new user in the database
-        let newUser = await UserData.createUser(req.body);
-        let activationHash = await UserData.createActivationHash(newUser._id);
-
-        //Send an activation email
-        EmailService.sendActivationEmail(activationHash, newUser.email, newUser.username);
-
-        res.status(200);
-        res.json(result);
     }
     static async activateUser(req, res){
         let requestedActivationHash = req.params.activationHash;
