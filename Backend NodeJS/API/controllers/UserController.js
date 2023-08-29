@@ -1,11 +1,14 @@
 let BaseController =  require("./BaseController.js");
 let UserService = require("../services/UserService.js");
+let EmailService = require("../services/EmailService.js");
+let UserData = require("../data/UserData.js");
 
 class UserController extends BaseController  {
     static async getGreeting (req, res) {
         res.send("Hello user");
     }
     static async createUser (req, res){
+        //First see if user request is valid and can create user
         let result = await BaseController.attemptExecution(()=>UserService.createUser(req.body));
 
         if(result.serverError){
@@ -19,6 +22,13 @@ class UserController extends BaseController  {
             res.json(result)
             return;
         }
+
+        //If the checks pass, create a new user in the database
+        let newUser = await UserData.createUser(req.body);
+        let activationHash = await UserData.createActivationHash(newUser._id);
+
+        //Send an activation email
+        EmailService.sendActivationEmail(activationHash, newUser.email, newUser.username);
 
         res.status(200);
         res.json(result);
