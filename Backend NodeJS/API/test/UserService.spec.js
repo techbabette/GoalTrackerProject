@@ -39,7 +39,7 @@ describe("User registration", () =>{
         assert.ok(result.success === false);
     })
 
-    it("Can pass tests with correct information", async () => {
+    it("Returns success with correct information", async () => {
         let result = await UserService.createUser(correctUser, true);
         assert.ok(result.success === true);
     })
@@ -71,8 +71,26 @@ describe("User authentication", () => {
         assert.ok(result.success === false);
     })
 
-    it("Can authenticate user with correct information", async () => {
+    it("Returns success with correct information", async () => {
         let result = await UserService.authenticateUser(correctInformation);
+        assert.ok(result.success === true);
+    })
+})
+describe("User activation", () => {
+    let correctHash
+
+    beforeEach(()=> {
+        correctHash = "2b25b273edc7b55d1cc72168425bf8531195fbdd";
+    })
+
+    it("Can catch activation hash not existing", async () => {
+        correctHash = "232";
+        let result = await UserService.activateUser(correctHash);
+        assert.ok(result.success === false);
+    })
+
+    it("Returns success with valid activation hash", async() => {
+        let result = await UserService.activateUser(correctHash);
         assert.ok(result.success === true);
     })
 })
