@@ -2,15 +2,16 @@ let BaseController =  require("./BaseController.js");
 let UserService = require("../services/UserService.js");
 let EmailService = require("../services/EmailService.js");
 let UserData = require("../data/UserData.js");
+let UserActivationLinkData = require("../data/UserActivationLinkData.js");
 
 class UserController extends BaseController  {
     static async getGreeting (req, res) {
         res.send("Hello user");
     }
     static async createUser (req, res){
-        //First see if user request is valid and can create user
         try{
-            let result = UserService.createUser(req.body);
+            //First see if user request is valid and can create user
+            let result = await UserService.createUser(req.body);
     
             if(!result.success){
                 res.status(401);
@@ -20,9 +21,9 @@ class UserController extends BaseController  {
     
             //If the checks pass, create a new user in the database
             let newUser = await UserData.createUser(req.body);
-            let activationHash = await UserData.createActivationHash(newUser._id);
+            let activationHash = await UserActivationLinkData.createActivationHash(newUser._id);
     
-            //Send an activation email, possibly send email after res so user experience is smoother
+            //Send an activation email, potentially send email after res so user experience is smoother
             await EmailService.sendActivationEmail(activationHash, newUser.email, newUser.username);
     
             res.status(200);
@@ -30,47 +31,63 @@ class UserController extends BaseController  {
         }
         catch{
             res.status(500)
-            res.json(result);
+            res.json(this.serverError);
             return;
         }
     }
     static async activateUser(req, res){
-        let requestedActivationHash = req.params.activationHash;
+        try{
+            let requestedActivationHash = req.params.activationHash;
 
-        let result = await BaseController.attemptExecution(()=>UserService.activateUser(requestedActivationHash));
+            //Check if activation hash is correct and valid
+            let result = await UserService.activateUser(requestedActivationHash);
+    
+            if(!result.success){
+                res.status(401);
+                res.json(result)
+                return;
+            }
 
-        if(result.serverError){
-            res.status(500)
+            let userToActivate = result.body;
+
+            //Activate user if activation hash is valid
+            await UserData.activateUser(userToActivate);
+            await UserActivationLinkData.deleteActivationHash(userToActivate._id);
+    
+            res.status(200);
             res.json(result);
+        }
+        catch{
+            res.status(500)
+            res.json(this.serverError);
             return;
         }
-
-        if(!result.success){
-            res.status(401);
-            res.json(result)
-            return;
-        }
-
-        res.status(200);
-        res.json(result);
     }
     static async authenticateUser (req, res) {
-        let result = await BaseController.attemptExecution(()=>UserService.authenticateUser(req.body));
+        try{
+            //Check if login credentials are correct
+            let result = await UserService.authenticateUser(req.body);
+    
+            if(!result.success){
+                res.status(401);
+                res.json(result)
+                return;
+            }
 
-        if(result.serverError){
-            res.status(500)
+            let user = result.body;
+
+            //Create a token to return to client
+            result.body = UserService.createToken({userId : user._id, username:user.username});
+    
+            res.status(200);
             res.json(result);
+        }
+        catch{
+            res.status(500)
+            res.json(this.serverError);
             return;
         }
 
-        if(!result.success){
-            res.status(401);
-            res.json(result)
-            return;
-        }
-
-        res.status(200);
-        res.json(result);
     }
     static async mustBeLoggedIn (req, res) {
         res.json({"message" : "You passed the authorization check!"});

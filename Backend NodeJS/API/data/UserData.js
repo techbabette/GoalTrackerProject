@@ -1,7 +1,5 @@
 let UserModel = require("../models/User.js");
-let UserActivationLinkModel = require("../models/UserActivationLink.js");
 let bcrypt = require("bcryptjs");
-let crypto = require("crypto");
 
 class UserData {
     static async createUser(userObject){
@@ -13,9 +11,9 @@ class UserData {
 
         return newUser;
     }
-    static async createActivationHash(userId){
-        let activationHash = crypto.randomBytes(20).toString("hex");
-        return await UserActivationLinkModel.create({userId, activationHash});
+    static async activateUser(userObject){
+        userObject.activated = true;
+        await userObject.save();
     }
 }
 

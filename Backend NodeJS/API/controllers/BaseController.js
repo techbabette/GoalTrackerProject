@@ -6,6 +6,7 @@ class baseController{
     
         return userId;
     }
+    static serverError = {message: "Server error", success : false, serverError : true};
     //Simple operation manager alternative
     //Placeholder res object during service transition
     static async attemptExecution(functionToExecute){
@@ -14,9 +15,9 @@ class baseController{
         }
         catch(ex){
             console.log(ex);
-            return {message: "Server error", success : false, serverError : true};
+            return this.serverError;
         }
-    } 
+    }
 }
 
 module.exports = baseController

@@ -137,13 +137,13 @@ class UserService extends BaseService{
             return responseObject;
         }
 
-        userToActivate.activated = true;
-
-        await UserActivationLinkModel.deleteOne({_id: databaseActivationHash._id});
-        await userToActivate.save();
         responseObject.message = "Successfully activated account";
         responseObject.success = true;
+        responseObject.body = userToActivate
         return responseObject;
+    }
+    static createToken(userInformation, expiresIn = "6h"){
+        return JWT.sign(userInformation, process.env.TOKEN_KEY, {expiresIn});
     }
     static async authenticateUser (userInformation) {
         let responseObject = {};
@@ -177,9 +177,7 @@ class UserService extends BaseService{
         }
 
         //If authentication runs into no errors
-        let returnToken = JWT.sign({user_id: user._id, username:user.username}, process.env.TOKEN_KEY, {expiresIn: "6h"});
-
-        responseObject.body = returnToken;
+        responseObject.body = user;
         responseObject.message = "Successfully authenticated user";
         responseObject.success = true;
         return responseObject;
