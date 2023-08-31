@@ -31,7 +31,7 @@ class UserController extends BaseController  {
         }
         catch{
             res.status(500)
-            res.json(this.serverError);
+            res.json(UserController.serverError);
             return;
         }
     }
@@ -59,7 +59,7 @@ class UserController extends BaseController  {
         }
         catch{
             res.status(500)
-            res.json(this.serverError);
+            res.json(UserController.serverError);
             return;
         }
     }
@@ -84,10 +84,31 @@ class UserController extends BaseController  {
         }
         catch{
             res.status(500)
-            res.json(this.serverError);
+            res.json(UserController.serverError);
             return;
         }
+    }
+    static async getUserInformation(req, res){
+        try{
+            let userId = UserController.getUserIdFromToken(req);
+            //Attempt to find user with id
+            let user = await UserData.findUserById(userId);
 
+            if(!user){
+                res.status(401);
+                res.json({message: "User not found", success: false});
+                return;
+            }
+
+            res.status(200);
+            res.json({message:"Found user", success: true, body:{username : user.username}});
+            return;
+        }
+        catch{
+            res.status(500)
+            res.json(UserController.serverError);
+            return;
+        }
     }
     static async mustBeLoggedIn (req, res) {
         res.json({"message" : "You passed the authorization check!"});

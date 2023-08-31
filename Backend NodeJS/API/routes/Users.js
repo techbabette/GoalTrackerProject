@@ -15,4 +15,6 @@ router.post("/login", controller.authenticateUser);
 
 router.get("/check", amILoggedIn, controller.mustBeLoggedIn);
 
+router.get("/returning", controller.getUserInformation);
+
 module.exports = router;

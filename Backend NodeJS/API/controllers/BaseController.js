@@ -2,7 +2,9 @@ class baseController{
     static getUserIdFromToken(req){
         let tokenSent = req.headers["bearer"];
     
-        let userId = JSON.parse(Buffer.from(tokenSent.split('.')[1], 'base64').toString()).user_id; 
+        console.log(tokenSent);
+
+        let userId = JSON.parse(Buffer.from(tokenSent.split('.')[1], 'base64').toString()).userId; 
     
         return userId;
     }

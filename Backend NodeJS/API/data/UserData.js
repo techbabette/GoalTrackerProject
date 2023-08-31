@@ -15,6 +15,11 @@ class UserData {
         userObject.activated = true;
         await userObject.save();
     }
+    static async findUserById(userId){
+        console.log(userId);
+        let user = await UserModel.findById(userId);
+        return user;
+    }
 }
 
 module.exports = UserData;
