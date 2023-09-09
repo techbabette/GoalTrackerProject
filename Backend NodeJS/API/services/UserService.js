@@ -125,7 +125,7 @@ class UserService extends BaseService{
 
         let userToActivate;
 
-        let databaseActivationHash = await UserActivationLinkModel.findOne({activationHash})
+        let databaseActivationHash = await UserActivationLinkModel.findOne({activationHash, type: "activation"})
 
         if(databaseActivationHash){
             userToActivate = await UserModel.findById(databaseActivationHash.userId);
@@ -181,6 +181,30 @@ class UserService extends BaseService{
         responseObject.message = "Successfully authenticated user";
         responseObject.success = true;
         return responseObject;
+    }
+    static async resetPassword (resetHash, password){
+        let responseObject = this.createResponseObject();
+
+        let userToReset;
+
+        let resetHashExists = await UserActivationLinkModel.findOne({resetHash, type: "reset"});
+
+        if(resetHashExists){
+            userToReset = await UserModel.findById(resetHashExists.userId);
+        }
+
+        if(!userToReset){
+            responseObject.message = "Invalid password reset hash";
+            responseObject.success = false;
+            return responseObject;
+        }
+
+        await this.runTests(this.passwordChecks, password, responseObject, "passwordError");
+        if(responseObject.success === false) return responseObject;
+
+        responseObject.message = "Valid reset hash";
+        responseObject.success = true;
+        responseObject.body = userToReset;
     }
 }
 

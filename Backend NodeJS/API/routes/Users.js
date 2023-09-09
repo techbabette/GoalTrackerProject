@@ -13,6 +13,8 @@ router.get("/activate/:activationHash", controller.activateUser);
 
 router.post("/login", controller.authenticateUser);
 
+router.post("/login/:passwordHash", controller.submitResetPassword);
+
 router.get("/check", amILoggedIn, controller.mustBeLoggedIn);
 
 router.get("/returning", controller.getUserInformation);

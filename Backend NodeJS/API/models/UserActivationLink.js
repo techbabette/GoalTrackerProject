@@ -10,6 +10,10 @@ const UserActivationLinkSchema = Schema({
         type: String,
         required: true
     },
+    type:{
+        type: String,
+        default: "activation"
+    },
     issuedAt: {
         type: Date,
         required: false,

@@ -11,6 +11,13 @@ class UserData {
 
         return newUser;
     }
+    static async changeUserPassword(userObject, unsaltedPassword){
+        let password = await bcrypt.hash(unsaltedPassword, 10);
+
+        userObject.password = password;
+        await userObject.save();
+        return userObject;
+    }
     static async activateUser(userObject){
         userObject.activated = true;
         await userObject.save();

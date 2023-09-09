@@ -110,6 +110,32 @@ class UserController extends BaseController  {
             return;
         }
     }
+    static async submitResetPassword(req, res){
+        try{
+            let requestedResetHash = req.params.passwordHash;
+            let attemptedPassword = req.body.password;
+            //Checks if the sent hash is correct and password is valid
+            let result = await UserService.resetPassword(requestedResetHash, attemptedPassword);
+
+            if(!result){
+                res.status(401);
+                res.json({message: result.message, success: false});
+            }
+
+            let user = result.body;
+
+            user = await UserData.changeUserPassword(user, attemptedPassword);
+
+            res.status(200);
+            res.json({messsage:"Successfully changed password", success: true});
+            return;
+        }
+        catch{
+            res.status(500)
+            res.json(UserController.serverError);
+            return;
+        }
+    }
     static async mustBeLoggedIn (req, res) {
         res.json({"message" : "You passed the authorization check!"});
     } 
