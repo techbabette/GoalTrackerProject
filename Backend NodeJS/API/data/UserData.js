@@ -11,6 +11,10 @@ class UserData {
 
         return newUser;
     }
+    static async findUser(searchObject){
+        let user = await UserModel.find(searchObject);
+        return user;
+    }
     static async changeUserPassword(userObject, unsaltedPassword){
         let password = await bcrypt.hash(unsaltedPassword, 10);
 
@@ -23,7 +27,6 @@ class UserData {
         await userObject.save();
     }
     static async findUserById(userId){
-        console.log(userId);
         let user = await UserModel.findById(userId);
         return user;
     }

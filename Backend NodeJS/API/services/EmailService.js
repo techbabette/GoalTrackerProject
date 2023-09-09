@@ -19,6 +19,16 @@ class EmailService extends BaseService{
         };
         await this.transporter.sendMail(mail);
     }
+    static async sendPasswordResetEmail(passwordHash, email, username){
+        let resetLink = `${process.env.RESET_URL}${passwordHash}`;
+        let mail = {
+            from: "GoalTracker@gmail.com",
+            to: email,
+            subject: "Your GoalTracker password reset link",
+            html: `<h1>Welcome back to GoalTracker ${username}</h1><a href="${resetLink}">Click me to reset your password!</a>`
+        }
+        await this.transporter.sendMail(mail);
+    }
 }
 
 module.exports = EmailService;

@@ -110,7 +110,35 @@ class UserController extends BaseController  {
             return;
         }
     }
-    static async submitResetPassword(req, res){
+    static async startPasswordReset(req, res){
+        try{
+            //First see if user with given email exists exists
+            let result = await UserData.findUser({email: req.body.email}); 
+
+            if(!result){
+                res.status(401);
+                res.json({message: "User not found", success: false})
+                return;
+            }
+
+            let user = result;
+
+            //If the checks pass, create a new user in the database
+            let activationHash = await UserActivationLinkData.createPasswordResetHash(user._id);
+
+            //Send a password reset email
+            await EmailService.sendActivationEmail(activationHash, newUser.email, newUser.username);
+
+            res.status(200);
+            res.json(result);
+        }
+        catch{
+            res.status(500)
+            res.json(UserController.serverError);
+            return;
+        }
+    }
+    static async submitPasswordReset(req, res){
         try{
             let requestedResetHash = req.params.passwordHash;
             let attemptedPassword = req.body.password;
