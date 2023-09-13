@@ -24,9 +24,13 @@ app.use(express.json());
 app.use(URLParser);
 app.use(JSONParser);
 
-app.use("/users", asyncHandler(UserRouter));
-app.use("/goals", asyncHandler(GoalRouter));
-app.use("/progress" , asyncHandler(ProgressRouter));
+app.use("/users", UserRouter);
+app.use("/goals", GoalRouter);
+app.use("/progress" , ProgressRouter);
+
+app.use((error, req, res, next) => {
+    res.json({message: "Server error", success : false, serverError : true});
+})
 
 let port = process.env.PORT ?? 3000;
 

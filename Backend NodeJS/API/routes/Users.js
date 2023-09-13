@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const asyncHandler = require("../middleware/asyncHandler");
+// const tryNext = require("../middleware/tryNext");
 
 const controller = require("../controllers/UserController");
+
+// router.use(tryNext);
 
 const {amILoggedIn} = require("../middleware/authorization");
 
@@ -19,6 +23,6 @@ router.post("/resetpassword", controller.startPasswordReset);
 
 router.get("/check", amILoggedIn, controller.mustBeLoggedIn);
 
-router.get("/returning", controller.getUserInformation);
+router.get("/returning", asyncHandler(controller.getUserInformation));
 
 module.exports = router;

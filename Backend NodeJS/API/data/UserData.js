@@ -27,9 +27,9 @@ class UserData {
         await userObject.save();
     }
     static async findUserById(userId){
-        // let user = await UserModel.findById(userId);
-        // return user;
-        throw new Error("Errorcina za uhvatiti");
+        let user = await UserModel.findById(userId);
+        return user;
+        // throw new Error("Error to catch");
     }
 }
 
