@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose =  require("mongoose");
 const bodyParser =  require("body-parser");
 const cors = require("cors");
+const tryNextMiddleware = require("./middleware/tryNext");
 require('dotenv').config();
 
 const app = express();
@@ -23,9 +24,14 @@ app.use(express.json());
 app.use(URLParser);
 app.use(JSONParser);
 
-app.use("/users", UserRouter);
-app.use("/goals", GoalRouter);
-app.use("/progress", ProgressRouter);
+const asyncHandler = fn => (req, res, next) =>
+  Promise
+    .resolve(fn(req, res, next))
+    .catch(res.json({message: "Server error", success : false, serverError : true}));
+
+app.use("/users", asyncHandler(UserRouter));
+app.use("/goals", asyncHandler(GoalRouter));
+app.use("/progress" , asyncHandler(ProgressRouter));
 
 let port = process.env.PORT ?? 3000;
 

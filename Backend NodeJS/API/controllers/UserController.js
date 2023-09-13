@@ -89,26 +89,19 @@ class UserController extends BaseController  {
         }
     }
     static async getUserInformation(req, res){
-        try{
-            let userId = UserController.getUserIdFromToken(req);
-            //Attempt to find user with id
-            let user = await UserData.findUserById(userId);
+        let userId = UserController.getUserIdFromToken(req);
+        //Attempt to find user with id
+        let user = await UserData.findUserById(userId);
 
-            if(!user){
-                res.status(401);
-                res.json({message: "User not found", success: false});
-                return;
-            }
-
-            res.status(200);
-            res.json({message:"Found user", success: true, body:{username : user.username}});
+        if(!user){
+            res.status(401);
+            res.json({message: "User not found", success: false});
             return;
         }
-        catch{
-            res.status(500)
-            res.json(UserController.serverError);
-            return;
-        }
+
+        res.status(200);
+        res.json({message:"Found user", success: true, body:{username : user.username}});
+        return;
     }
     static async startPasswordReset(req, res){
         try{
