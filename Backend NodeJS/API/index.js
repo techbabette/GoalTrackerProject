@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose =  require("mongoose");
 const bodyParser =  require("body-parser");
 const cors = require("cors");
-const tryNextMiddleware = require("./middleware/tryNext");
+const asyncHandler = require("./middleware/asyncHandler");
 require('dotenv').config();
 
 const app = express();
@@ -23,11 +23,6 @@ app.use(cors());
 app.use(express.json());
 app.use(URLParser);
 app.use(JSONParser);
-
-const asyncHandler = fn => (req, res, next) =>
-  Promise
-    .resolve(fn(req, res, next))
-    .catch(res.json({message: "Server error", success : false, serverError : true}));
 
 app.use("/users", asyncHandler(UserRouter));
 app.use("/goals", asyncHandler(GoalRouter));
