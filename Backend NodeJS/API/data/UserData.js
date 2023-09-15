@@ -29,7 +29,6 @@ class UserData {
     static async findUserById(userId){
         let user = await UserModel.findById(userId);
         return user;
-        // throw new Error("Error to catch");
     }
 }
 
