@@ -15,7 +15,7 @@ let authorizationMethods = {
         }
         catch(e){
             res.status(401)
-            res.json("Invalid Token");
+            res.json({error: "Session expired", success: false});
             return;
         }
     

@@ -20,6 +20,6 @@ router.post("/resetpassword", controller.startPasswordReset);
 
 router.get("/check", amILoggedIn, controller.mustBeLoggedIn);
 
-router.get("/returning", asyncHandler(controller.getUserInformation));
+router.get("/returning", amILoggedIn, asyncHandler(controller.getUserInformation));
 
 module.exports = router;
