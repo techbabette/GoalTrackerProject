@@ -1,0 +1,30 @@
+version: "3"
+services:
+  mongodb:
+    image: mongo
+    environment:
+    - MONGO_INITDB_ROOT_USERNAME=root
+    - MONGO_INITDB_ROOT_PASSWORD=root
+    - MONGO_INITDB_DATABASE:goals
+    command: mongod --port 27018
+    ports: 
+      - "27018:27018"
+  mongo-seed:
+    build: ./database-seed
+    depends_on:
+      - mongodb
+  node-app:
+    build:
+      context: ./API
+      args:
+        NODE_ENV: production
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongodb
+    environment:
+      - NODE_ENV=production
+      - PORT = 4000
+    env_file:
+      - ./API/.env
+    command: npm run start

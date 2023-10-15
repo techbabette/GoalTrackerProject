@@ -29,7 +29,7 @@ app.use("/goals", GoalRouter);
 app.use("/progress" , ProgressRouter);
 
 app.use((error, req, res, next) => {
-    res.json({message: "Server error", success : false, serverError : true});
+    res.json({message: "Server error", success : false, serverError : true, error});
 })
 
 let port = process.env.PORT ?? 3000;
