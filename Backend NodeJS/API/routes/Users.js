@@ -8,7 +8,7 @@ const {amILoggedIn} = require("../middleware/authorization");
 
 router.get("/", controller.getGreeting);
 
-router.post("/register", controller.createUser);
+router.post("/register", asyncHandler(controller.createUser));
 
 router.get("/activate/:activationHash", controller.activateUser);
 

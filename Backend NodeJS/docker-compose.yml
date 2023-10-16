@@ -3,9 +3,9 @@ services:
   mongodb:
     image: mongo
     environment:
-    - MONGO_INITDB_ROOT_USERNAME=root
-    - MONGO_INITDB_ROOT_PASSWORD=root
-    - MONGO_INITDB_DATABASE:goals
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: goals
     command: mongod --port 27018
     ports: 
       - "27018:27018"
