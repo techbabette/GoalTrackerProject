@@ -1,3 +1,9 @@
 [
-    
+    {
+        "username": "marina",
+        "password": "$2a$10$TkO.ZGDPhtfAEgEl.G4lwOUyz4UtZcOH.EqJ9BX3RpEcweIggBiDS",
+        "email": "marina2@gmail.com",
+        "activated": true,
+        "__v": 0
+      }
 ]
