@@ -4,4 +4,4 @@ echo "Hello, World!"
 
 mongoimport --collection users --file users.json --jsonArray --uri "mongodb://root:root@mongodb:27018/?authMechanism=SCRAM-SHA-256" --authenticationDatabase admin
 
-echo ("(+) Successfully seeded database")
+echo "(+) Successfully seeded database"
