@@ -14,7 +14,7 @@ let UserRouter = require("./routes/Users");
 let GoalRouter = require("./routes/Goals");
 let ProgressRouter = require("./routes/Progress");
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, dbName: 'goals'})
 .then(res => console.log(`Connection Succesful ${res}`))
 .catch(err => console.log(`Error in DB connection ${err}`));
 
