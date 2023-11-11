@@ -1,6 +1,6 @@
 FROM mongo
 
-COPY users.json /users.json
+COPY . ./
 ADD seed.sh /
 RUN chmod +x /seed.sh
 CMD ./seed.sh
